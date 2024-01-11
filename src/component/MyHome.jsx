@@ -1,5 +1,8 @@
 import { Container } from "react-bootstrap";
-import MyGame from "./MyGame";
+import MyGame from "./homegame/MyGame";
+import { stages } from "./assets/variables";
+import { enemies } from "./assets/variables";
+// import * as variables from "./assets/variables";
 
 const MyHome = () => {
   return (
@@ -13,7 +16,7 @@ const MyHome = () => {
       }}
       className="pt-5 px-4"
     >
-      <MyGame></MyGame>
+      <MyGame stages={stages} enemies={enemies}></MyGame>
     </Container>
   );
 };
