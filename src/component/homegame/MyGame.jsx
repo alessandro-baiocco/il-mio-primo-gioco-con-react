@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Container } from "react-bootstrap";
 
 const MyGame = (props) => {
-  const [status, setStatus] = useState("not in fight");
+  const [status, setStatus] = useState("normal");
 
   return (
     <Container
