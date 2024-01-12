@@ -24,3 +24,7 @@ export const enemies = [
     image: "https://toppng.com/uploads/preview/slime-slime-11562980326osnwivy7ba.png",
   },
 ];
+
+// const handleAhead = () => {
+//  player.position += 1
+// }
