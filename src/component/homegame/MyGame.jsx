@@ -9,6 +9,8 @@ const MyGame = (props) => {
   const coordinates = useSelector((state) => state.coordinates);
   const dispatch = useDispatch();
 
+  let enemiesHealth = 10;
+
   // const handleAhead = () => {
   //   props.player.position += 1;
   //   console.log(props.player.position);
@@ -17,6 +19,18 @@ const MyGame = (props) => {
   useEffect(() => {
     console.log(playerInformation);
   }, [playerInformation]);
+
+  const enterInFight = () => {
+    if (props.stages[coordinates.stages].fight.includes(coordinates.position.length)) {
+      setStatus("fight");
+    }
+  };
+  const attack = () => {
+    enemiesHealth -= 5;
+    if (enemiesHealth <= 0) {
+      setStatus("normal");
+    }
+  };
 
   return (
     <Container
@@ -39,25 +53,48 @@ const MyGame = (props) => {
           margin: "1px",
         }}
       >
-        {coordinates.position.length < 10 ? (
-          <Button
-            variant="outline-primary"
-            onClick={() => {
-              dispatch(makeAStep());
-            }}
-          >
-            vai avanti
-          </Button>
-        ) : (
-          <Button
-            variant="outline-primary"
-            onClick={() => {
-              dispatch(nextLevel());
-            }}
-          >
-            prossimo livello
-          </Button>
-        )}
+        {status === "fight" &&
+          (enemiesHealth <= 0 ? (
+            <Button
+              variant="outline-primary"
+              onClick={() => {
+                dispatch(makeAStep());
+                enterInFight();
+              }}
+            >
+              vai avanti
+            </Button>
+          ) : (
+            <Button
+              variant="outline-danger"
+              onClick={() => {
+                attack();
+              }}
+            >
+              attacca
+            </Button>
+          ))}
+        {status === "normal" &&
+          (coordinates.position.length < 10 ? (
+            <Button
+              variant="outline-primary"
+              onClick={() => {
+                dispatch(makeAStep());
+                enterInFight();
+              }}
+            >
+              vai avanti
+            </Button>
+          ) : (
+            <Button
+              variant="outline-primary"
+              onClick={() => {
+                dispatch(nextLevel());
+              }}
+            >
+              prossimo livello
+            </Button>
+          ))}
       </Container>
     </Container>
   );
