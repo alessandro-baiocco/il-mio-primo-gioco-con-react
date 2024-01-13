@@ -3,9 +3,11 @@ import persistReducer from "redux-persist/es/persistReducer";
 import storage from "redux-persist/lib/storage";
 import persistStore from "redux-persist/es/persistStore";
 import player from "../reducers/player";
+import coordinates from "../reducers/coordinates";
 
 const rootReducer = combineReducers({
   player: player,
+  coordinates: coordinates,
 });
 
 const persistConfig = { key: "root", storage };

@@ -6,6 +6,7 @@ import { GO_AHEAD, makeAStep, nextLevel } from "../../redux/action";
 const MyGame = (props) => {
   const [status, setStatus] = useState("normal");
   const playerInformation = useSelector((state) => state.player);
+  const coordinates = useSelector((state) => state.coordinates);
   const dispatch = useDispatch();
 
   // const handleAhead = () => {
@@ -22,7 +23,7 @@ const MyGame = (props) => {
       style={{
         border: "cyan solid 2px",
         minHeight: "80vh",
-        backgroundImage: `${props.stages[playerInformation.stages].background}`,
+        backgroundImage: `${props.stages[coordinates.stages].background}`,
         position: "relative",
       }}
     >
@@ -38,7 +39,7 @@ const MyGame = (props) => {
           margin: "1px",
         }}
       >
-        {playerInformation.position.length < 10 ? (
+        {coordinates.position.length < 10 ? (
           <Button
             variant="outline-primary"
             onClick={() => {
