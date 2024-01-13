@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { GO_AHEAD } from "../../redux/action";
+import { GO_AHEAD, makeAStep, nextLevel } from "../../redux/action";
 
 const MyGame = (props) => {
   const [status, setStatus] = useState("normal");
@@ -38,14 +38,25 @@ const MyGame = (props) => {
           margin: "1px",
         }}
       >
-        <Button
-          variant="outline-primary"
-          onClick={() => {
-            dispatch({ type: GO_AHEAD, payload: 1 });
-          }}
-        >
-          vai avanti
-        </Button>
+        {playerInformation.position.length < 10 ? (
+          <Button
+            variant="outline-primary"
+            onClick={() => {
+              dispatch(makeAStep());
+            }}
+          >
+            vai avanti
+          </Button>
+        ) : (
+          <Button
+            variant="outline-primary"
+            onClick={() => {
+              dispatch(nextLevel());
+            }}
+          >
+            prossimo livello
+          </Button>
+        )}
       </Container>
     </Container>
   );

@@ -3,9 +3,10 @@ import MyGame from "./homegame/MyGame";
 import { stages } from "./assets/variables";
 import { enemies } from "./assets/variables";
 import MyMap from "./homegame/MyMap";
-// import * as variables from "./assets/variables";
+import { useSelector } from "react-redux";
 
 const MyHome = () => {
+  const playerInformation = useSelector((state) => state.player);
   return (
     <Container
       fluid
@@ -17,7 +18,7 @@ const MyHome = () => {
       }}
       className="pt-5 px-4"
     >
-      <MyMap stages={stages}></MyMap>
+      <MyMap stages={stages} position={playerInformation.position} level={playerInformation.stages}></MyMap>
       <MyGame stages={stages} enemies={enemies}></MyGame>
     </Container>
   );
