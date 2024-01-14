@@ -1,11 +1,11 @@
 import { useEffect, useReducer, useState } from "react";
 import { Button, Container, ProgressBar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { GO_AHEAD, makeAStep, nextLevel } from "../../redux/action";
+import { DEATH, GO_AHEAD, makeAStep, nextLevel } from "../../redux/action";
 
 const MyGame = (props) => {
   const [status, setStatus] = useState("normal");
-  const [fight, setFight] = useState(props.enemies[Math.floor(Math.random() + 1)]);
+  const [fight, setFight] = useState(null);
 
   const playerInformation = useSelector((state) => state.player);
   const coordinates = useSelector((state) => state.coordinates);
@@ -15,15 +15,12 @@ const MyGame = (props) => {
   const [enemiesHealth, setEnemiesHealth] = useState();
 
   useEffect(() => {
-    console.log(playerInformation);
-  }, [playerInformation]);
+    setFight(props.enemies[Math.floor(Math.random() * 2)]);
+  }, [fight]);
 
   const enterInFight = () => {
     if (props.stages[coordinates.stages].fight.includes(coordinates.position.length)) {
-      setFight(props.enemies[Math.floor(Math.random())]);
       setStatus("fight");
-      console.log(props.enemies[0]);
-      console.log(fight, Math.floor(Math.random()));
       setEnemiesHealth(fight.health);
     }
   };
@@ -33,14 +30,20 @@ const MyGame = (props) => {
     console.log(newEnemiesHelth, enemiesHealth);
     if (newEnemiesHelth <= 0) {
       setStatus("normal");
+      setFight(null);
     } else {
       enemyTurn();
     }
   };
 
   const enemyTurn = () => {
-    let NewMyHealth = myHealth;
-    setMyHealth(NewMyHealth - fight.attack);
+    let newMyHealth = myHealth;
+    setMyHealth(newMyHealth - fight.attack);
+    if (newMyHealth <= 0) {
+      dispatch({ type: DEATH, payload: 1 });
+      setStatus("normal");
+      setMyHealth(playerInformation.health);
+    }
   };
 
   return (
@@ -62,6 +65,17 @@ const MyGame = (props) => {
           className="mt-1 ms-2"
         />
       </Container>
+      {status === "fight" && (
+        <Container>
+          <img
+            src={fight.image}
+            alt="enemy-sprite"
+            className="d-flex justify-content-center img-fluid"
+            style={{ maxWidth: "360px", maxHeight: "360px" }}
+          />
+        </Container>
+      )}
+
       <Container
         style={{
           background: "black",

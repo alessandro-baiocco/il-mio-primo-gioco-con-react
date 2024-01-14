@@ -1,4 +1,4 @@
-import { GO_AHEAD, NEXT_LEVEL } from "../action";
+import { DEATH, GO_AHEAD, NEXT_LEVEL } from "../action";
 
 const initialState = {
   position: [0],
@@ -16,6 +16,12 @@ const coordinates = (state = initialState, action) => {
       return {
         ...state,
         stages: [...state.stages],
+        position: state.position.filter((number) => number !== action.payload),
+      };
+    case DEATH:
+      return {
+        ...state,
+        stages: state.stages.filter((number) => number !== action.payload),
         position: state.position.filter((number) => number !== action.payload),
       };
 
