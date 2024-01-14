@@ -5,16 +5,12 @@ import { GO_AHEAD, makeAStep, nextLevel } from "../../redux/action";
 
 const MyGame = (props) => {
   const [status, setStatus] = useState("normal");
+  const [fight, setFight] = useState(props.enemies[Math.floor(Math.random() + 1)]);
   const playerInformation = useSelector((state) => state.player);
   const coordinates = useSelector((state) => state.coordinates);
   const dispatch = useDispatch();
 
-  let enemiesHealth = 10;
-
-  // const handleAhead = () => {
-  //   props.player.position += 1;
-  //   console.log(props.player.position);
-  // };
+  const [enemiesHealth, setEnemiesHealth] = useState();
 
   useEffect(() => {
     console.log(playerInformation);
@@ -22,12 +18,18 @@ const MyGame = (props) => {
 
   const enterInFight = () => {
     if (props.stages[coordinates.stages].fight.includes(coordinates.position.length)) {
+      setFight(props.enemies[Math.floor(Math.random())]);
       setStatus("fight");
+      console.log(props.enemies[0]);
+      console.log(fight, Math.floor(Math.random()));
+      setEnemiesHealth(fight.health);
     }
   };
   const attack = () => {
-    enemiesHealth -= 5;
-    if (enemiesHealth <= 0) {
+    let newEnemiesHelth = enemiesHealth;
+    setEnemiesHealth((newEnemiesHelth -= 5));
+    console.log(newEnemiesHelth, enemiesHealth);
+    if (newEnemiesHelth <= 0) {
       setStatus("normal");
     }
   };
@@ -53,27 +55,16 @@ const MyGame = (props) => {
           margin: "1px",
         }}
       >
-        {status === "fight" &&
-          (enemiesHealth <= 0 ? (
-            <Button
-              variant="outline-primary"
-              onClick={() => {
-                dispatch(makeAStep());
-                enterInFight();
-              }}
-            >
-              vai avanti
-            </Button>
-          ) : (
-            <Button
-              variant="outline-danger"
-              onClick={() => {
-                attack();
-              }}
-            >
-              attacca
-            </Button>
-          ))}
+        {status === "fight" && enemiesHealth > 0 && (
+          <Button
+            variant="outline-danger"
+            onClick={() => {
+              attack();
+            }}
+          >
+            attacca
+          </Button>
+        )}
         {status === "normal" &&
           (coordinates.position.length < 10 ? (
             <Button
