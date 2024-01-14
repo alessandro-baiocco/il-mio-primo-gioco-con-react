@@ -1,3 +1,5 @@
+import { REMOVE_HEALTH } from "../action";
+
 const initialState = {
   health: 40,
   attack: 3,

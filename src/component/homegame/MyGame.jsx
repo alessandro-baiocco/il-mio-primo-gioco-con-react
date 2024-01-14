@@ -1,14 +1,16 @@
 import { useEffect, useReducer, useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, ProgressBar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { GO_AHEAD, makeAStep, nextLevel } from "../../redux/action";
 
 const MyGame = (props) => {
   const [status, setStatus] = useState("normal");
   const [fight, setFight] = useState(props.enemies[Math.floor(Math.random() + 1)]);
+
   const playerInformation = useSelector((state) => state.player);
   const coordinates = useSelector((state) => state.coordinates);
   const dispatch = useDispatch();
+  const [myHealth, setMyHealth] = useState(playerInformation.health);
 
   const [enemiesHealth, setEnemiesHealth] = useState();
 
@@ -27,11 +29,18 @@ const MyGame = (props) => {
   };
   const attack = () => {
     let newEnemiesHelth = enemiesHealth;
-    setEnemiesHealth((newEnemiesHelth -= 5));
+    setEnemiesHealth((newEnemiesHelth -= playerInformation.attack));
     console.log(newEnemiesHelth, enemiesHealth);
     if (newEnemiesHelth <= 0) {
       setStatus("normal");
+    } else {
+      enemyTurn();
     }
+  };
+
+  const enemyTurn = () => {
+    let NewMyHealth = myHealth;
+    setMyHealth(NewMyHealth - fight.attack);
   };
 
   return (
@@ -43,6 +52,16 @@ const MyGame = (props) => {
         position: "relative",
       }}
     >
+      <Container style={{ maxWidth: "30%" }} className="d-flex ms-0">
+        <p className="text-light">Punti ferita :</p>
+        <ProgressBar
+          now={(100 * myHealth) / playerInformation.health}
+          label={`${myHealth} / ${playerInformation.health}`}
+          variant="danger"
+          style={{ width: "40%" }}
+          className="mt-1 ms-2"
+        />
+      </Container>
       <Container
         style={{
           background: "black",
