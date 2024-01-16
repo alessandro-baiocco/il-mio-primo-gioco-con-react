@@ -15,6 +15,7 @@ export const enemies = [
     attack: 2,
     defence: 0,
     image: "https://png.pngtree.com/png-clipart/20211022/ourmid/pngtree-goblin-goblin-elf-png-image_4004208.png",
+    armorClass: 8,
   },
   {
     name: "slime",
@@ -22,6 +23,7 @@ export const enemies = [
     attack: 1,
     defence: 0,
     image: "https://toppng.com/uploads/preview/slime-slime-11562980326osnwivy7ba.png",
+    armorClass: 6,
   },
 ];
 

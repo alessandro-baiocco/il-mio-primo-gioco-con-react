@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Container } from "react-bootstrap";
-import { useSelector } from "react-redux";
 
 const MyMap = (props) => {
   let generateLevels = Array.from(Array(props.stages[props.level.length - 1].levels).keys());

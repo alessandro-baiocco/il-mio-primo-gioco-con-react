@@ -1,7 +1,7 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Container, ProgressBar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { DEATH, GO_AHEAD, makeAStep, nextLevel } from "../../redux/action";
+import { DEATH, makeAStep, nextLevel } from "../../redux/action";
 
 const MyGame = (props) => {
   const [status, setStatus] = useState("normal");
@@ -16,6 +16,7 @@ const MyGame = (props) => {
 
   useEffect(() => {
     setFight(props.enemies[Math.floor(Math.random() * 2)]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fight]);
 
   const enterInFight = () => {
@@ -25,24 +26,34 @@ const MyGame = (props) => {
     }
   };
   const attack = () => {
-    let newEnemiesHelth = enemiesHealth;
-    setEnemiesHealth((newEnemiesHelth -= playerInformation.attack));
-    console.log(newEnemiesHelth, enemiesHealth);
-    if (newEnemiesHelth <= 0) {
-      setStatus("normal");
-      setFight(null);
+    let dice = Math.floor(Math.random() * 20 + 1);
+    if (dice >= fight.armorClass) {
+      let newEnemiesHelth = enemiesHealth;
+      setEnemiesHealth((newEnemiesHelth -= playerInformation.attack));
+      if (newEnemiesHelth <= 0) {
+        setStatus("normal");
+        setFight(null);
+      } else {
+        enemyTurn();
+      }
     } else {
+      console.log("lo hai mancato");
       enemyTurn();
     }
   };
 
   const enemyTurn = () => {
-    let newMyHealth = myHealth;
-    setMyHealth(newMyHealth - fight.attack);
-    if (newMyHealth <= 0) {
-      dispatch({ type: DEATH, payload: 1 });
-      setStatus("normal");
-      setMyHealth(playerInformation.health);
+    let dice = Math.floor(Math.random() * 20 + 1);
+    if (dice >= playerInformation.armorClass) {
+      let newMyHealth = myHealth;
+      setMyHealth(newMyHealth - fight.attack);
+      if (newMyHealth <= 0) {
+        dispatch({ type: DEATH, payload: 1 });
+        setStatus("normal");
+        setMyHealth(playerInformation.health);
+      }
+    } else {
+      console.log("l'avversario ti ha mancato");
     }
   };
 
@@ -66,11 +77,18 @@ const MyGame = (props) => {
         />
       </Container>
       {status === "fight" && (
-        <Container>
+        <Container className="d-flex justify-content-center">
+          <ProgressBar
+            now={(100 * enemiesHealth) / fight.health}
+            label={`${enemiesHealth} / ${fight.health}`}
+            variant="success"
+            style={{ width: "20%", position: "absolute" }}
+            className="mt-1 ms-2"
+          />
           <img
             src={fight.image}
             alt="enemy-sprite"
-            className="d-flex justify-content-center img-fluid"
+            className="img-fluid"
             style={{ maxWidth: "360px", maxHeight: "360px" }}
           />
         </Container>
@@ -94,6 +112,7 @@ const MyGame = (props) => {
             onClick={() => {
               attack();
             }}
+            style={{ position: "absolute", bottom: "4px", left: "100px" }}
           >
             attacca
           </Button>
@@ -106,6 +125,7 @@ const MyGame = (props) => {
                 dispatch(makeAStep());
                 enterInFight();
               }}
+              style={{ position: "absolute", bottom: "4px", left: "6px" }}
             >
               vai avanti
             </Button>
@@ -115,6 +135,7 @@ const MyGame = (props) => {
               onClick={() => {
                 dispatch(nextLevel());
               }}
+              style={{ position: "absolute", bottom: "4px", left: "6px" }}
             >
               prossimo livello
             </Button>
