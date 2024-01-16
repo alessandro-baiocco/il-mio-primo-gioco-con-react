@@ -6,6 +6,8 @@ import { DEATH, makeAStep, nextLevel } from "../../redux/action";
 const MyGame = (props) => {
   const [status, setStatus] = useState("normal");
   const [fight, setFight] = useState(null);
+  const [playerMessage, setPlayerMessage] = useState("");
+  const [enemyMessage, setEnemyMessage] = useState("");
 
   const playerInformation = useSelector((state) => state.player);
   const coordinates = useSelector((state) => state.coordinates);
@@ -29,15 +31,21 @@ const MyGame = (props) => {
     let dice = Math.floor(Math.random() * 20 + 1);
     if (dice >= fight.armorClass) {
       let newEnemiesHelth = enemiesHealth;
-      setEnemiesHealth((newEnemiesHelth -= playerInformation.attack));
+      setEnemiesHealth((newEnemiesHelth -= dice === 20 ? playerInformation.attack * 2 : playerInformation.attack));
+      setPlayerMessage(
+        `riesci a colpire ${fight.name} con ${dice} sul dado, infligendogli ${
+          dice === 20 ? playerInformation.attack * 2 : playerInformation.attack
+        } danni`
+      );
       if (newEnemiesHelth <= 0) {
+        setPlayerMessage("l'avversario cade a terra");
         setStatus("normal");
         setFight(null);
       } else {
         enemyTurn();
       }
     } else {
-      console.log("lo hai mancato");
+      setPlayerMessage(`hai mancato ${fight.name} facendo ${dice} sul dado`);
       enemyTurn();
     }
   };
@@ -45,15 +53,18 @@ const MyGame = (props) => {
   const enemyTurn = () => {
     let dice = Math.floor(Math.random() * 20 + 1);
     if (dice >= playerInformation.armorClass) {
+      setEnemyMessage(
+        `l'avversario ti colpisce con un ${dice} , infligendoti ${dice === 20 ? fight.attack * 2 : fight.attack} danni`
+      );
       let newMyHealth = myHealth;
-      setMyHealth(newMyHealth - fight.attack);
+      setMyHealth((newMyHealth -= dice === 20 ? fight.attack * 2 : fight.attack));
       if (newMyHealth <= 0) {
         dispatch({ type: DEATH, payload: 1 });
         setStatus("normal");
         setMyHealth(playerInformation.health);
       }
     } else {
-      console.log("l'avversario ti ha mancato");
+      setEnemyMessage(`l'avversario ti manca con un ${dice} `);
     }
   };
 
@@ -106,6 +117,8 @@ const MyGame = (props) => {
           margin: "1px",
         }}
       >
+        <p className="text-success">{playerMessage}</p>
+        <p className="text-danger">{enemyMessage}</p>
         {status === "fight" && enemiesHealth > 0 && (
           <Button
             variant="outline-danger"
