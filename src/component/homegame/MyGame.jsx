@@ -4,16 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { DEATH, makeAStep, nextLevel } from "../../redux/action";
 
 const MyGame = (props) => {
-  const [status, setStatus] = useState("normal");
-  const [fight, setFight] = useState(null);
-  const [playerMessage, setPlayerMessage] = useState("");
-  const [enemyMessage, setEnemyMessage] = useState("");
-
   const playerInformation = useSelector((state) => state.player);
   const coordinates = useSelector((state) => state.coordinates);
   const dispatch = useDispatch();
+  const [status, setStatus] = useState("normal");
+  const [fight, setFight] = useState(null);
+  const [playerMessage, setPlayerMessage] = useState(`${props.stages[coordinates.stages.length - 1].presentation} `);
+  const [enemyMessage, setEnemyMessage] = useState("");
   const [myHealth, setMyHealth] = useState(playerInformation.health);
-
   const [enemiesHealth, setEnemiesHealth] = useState();
 
   useEffect(() => {
@@ -22,9 +20,12 @@ const MyGame = (props) => {
   }, [fight]);
 
   const enterInFight = () => {
-    if (props.stages[coordinates.stages].fight.includes(coordinates.position.length)) {
+    if (props.stages[coordinates.stages.length - 1].fight.includes(coordinates.position.length)) {
       setStatus("fight");
+      setPlayerMessage(`un ${fight.name} ti blocca la strada`);
       setEnemiesHealth(fight.health);
+    } else {
+      setPlayerMessage(`hai fatto un'altro passo`);
     }
   };
   const attack = () => {
@@ -41,6 +42,7 @@ const MyGame = (props) => {
         setPlayerMessage("l'avversario cade a terra");
         setStatus("normal");
         setFight(null);
+        setEnemyMessage("");
       } else {
         enemyTurn();
       }
@@ -117,18 +119,21 @@ const MyGame = (props) => {
           margin: "1px",
         }}
       >
-        <p className="text-success">{playerMessage}</p>
-        <p className="text-danger">{enemyMessage}</p>
+        <p className="mt-2 ms-2 text-success">{playerMessage}</p>
+
         {status === "fight" && enemiesHealth > 0 && (
-          <Button
-            variant="outline-danger"
-            onClick={() => {
-              attack();
-            }}
-            style={{ position: "absolute", bottom: "4px", left: "100px" }}
-          >
-            attacca
-          </Button>
+          <>
+            <p className="text-danger ms-2 ">{enemyMessage}</p>
+            <Button
+              variant="outline-danger"
+              onClick={() => {
+                attack();
+              }}
+              style={{ position: "absolute", bottom: "4px", left: "100px" }}
+            >
+              attacca
+            </Button>
+          </>
         )}
         {status === "normal" &&
           (coordinates.position.length < 10 ? (
@@ -147,6 +152,7 @@ const MyGame = (props) => {
               variant="outline-primary"
               onClick={() => {
                 dispatch(nextLevel());
+                setPlayerMessage(`${props.stages[coordinates.stages.length - 1].presentation} `);
               }}
               style={{ position: "absolute", bottom: "4px", left: "6px" }}
             >
