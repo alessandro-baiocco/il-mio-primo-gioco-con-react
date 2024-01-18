@@ -33,6 +33,13 @@ const MyMap = (props) => {
               alt="fight-room"
             />
           )}
+          {props.stages[props.level.length - 1].boss.includes(i) && (
+            <img
+              src={"https://cdn3.iconfinder.com/data/icons/video-game-items-concepts/128/skull-2-512.png"}
+              className={`${i === props.position.length - 1 ? "d-none" : ""} img-fluid`}
+              alt="fight-room"
+            />
+          )}
 
           <img
             src={"https://www.freeiconspng.com/thumbs/person-icon/clipart--person-icon--cliparts-15.png"}

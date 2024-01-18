@@ -4,10 +4,12 @@ import storage from "redux-persist/lib/storage";
 import persistStore from "redux-persist/es/persistStore";
 import player from "../reducers/player";
 import coordinates from "../reducers/coordinates";
+import equipment from "../reducers/equipment";
 
 const rootReducer = combineReducers({
   player: player,
   coordinates: coordinates,
+  equipment: equipment,
 });
 
 const persistConfig = { key: "root", storage };

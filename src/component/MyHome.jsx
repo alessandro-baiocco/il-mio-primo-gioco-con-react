@@ -2,6 +2,7 @@ import { Container } from "react-bootstrap";
 import MyGame from "./homegame/MyGame";
 import { stages } from "./assets/variables";
 import { enemies } from "./assets/variables";
+import { boss } from "./assets/variables";
 import MyMap from "./homegame/MyMap";
 import { useSelector } from "react-redux";
 
@@ -19,7 +20,7 @@ const MyHome = () => {
       className="pt-5 px-4"
     >
       <MyMap stages={stages} position={coordinates.position} level={coordinates.stages}></MyMap>
-      <MyGame stages={stages} enemies={enemies}></MyGame>
+      <MyGame stages={stages} boss={boss} enemies={enemies}></MyGame>
     </Container>
   );
 };

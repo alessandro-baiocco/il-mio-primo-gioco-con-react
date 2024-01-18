@@ -1,27 +1,33 @@
 import { useEffect, useState } from "react";
 import { Button, Container, ProgressBar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { DEATH, makeAStep, nextLevel } from "../../redux/action";
+import { CHANGE_SHIELD, DEATH, CHANGE_HEALTH, makeAStep, nextLevel, CHANGE_STATUS } from "../../redux/action";
 
 const MyGame = (props) => {
+  const dispatch = useDispatch();
   const playerInformation = useSelector((state) => state.player);
   const coordinates = useSelector((state) => state.coordinates);
-  const dispatch = useDispatch();
-  const [status, setStatus] = useState("normal");
+  const status = useSelector((state) => state.player.status);
   const [fight, setFight] = useState(null);
   const [playerMessage, setPlayerMessage] = useState(`${props.stages[coordinates.stages.length - 1].presentation} `);
   const [enemyMessage, setEnemyMessage] = useState("");
-  const [myHealth, setMyHealth] = useState(playerInformation.health);
   const [enemiesHealth, setEnemiesHealth] = useState();
 
-  useEffect(() => {
-    setFight(props.enemies[Math.floor(Math.random() * 2)]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fight]);
-
   const enterInFight = () => {
+    if (props.stages[coordinates.stages.length - 1].boss.includes(coordinates.position.length + 1)) {
+      setFight(props.boss[0]);
+    }
+    if (props.stages[coordinates.stages.length - 1].fight.includes(coordinates.position.length + 1)) {
+      setFight(props.enemies[Math.floor(Math.random() * 2)]);
+    }
+
     if (props.stages[coordinates.stages.length - 1].fight.includes(coordinates.position.length)) {
-      setStatus("fight");
+      dispatch({ type: CHANGE_STATUS, payload: "fight" });
+      setPlayerMessage(`un ${fight.name} ti blocca la strada`);
+      setEnemiesHealth(fight.health);
+    } else if (props.stages[coordinates.stages.length - 1].boss.includes(coordinates.position.length)) {
+      setFight(props.boss[0]);
+      dispatch({ type: CHANGE_STATUS, payload: "fight" });
       setPlayerMessage(`un ${fight.name} ti blocca la strada`);
       setEnemiesHealth(fight.health);
     } else {
@@ -32,7 +38,8 @@ const MyGame = (props) => {
     let dice = Math.floor(Math.random() * 20 + 1);
     if (dice >= fight.armorClass) {
       let newEnemiesHelth = enemiesHealth;
-      setEnemiesHealth((newEnemiesHelth -= dice === 20 ? playerInformation.attack * 2 : playerInformation.attack));
+      newEnemiesHelth -= dice === 20 ? playerInformation.attack * 2 : playerInformation.attack;
+      setEnemiesHealth(newEnemiesHelth);
       setPlayerMessage(
         `riesci a colpire ${fight.name} con ${dice} sul dado, infligendogli ${
           dice === 20 ? playerInformation.attack * 2 : playerInformation.attack
@@ -40,7 +47,7 @@ const MyGame = (props) => {
       );
       if (newEnemiesHelth <= 0) {
         setPlayerMessage("l'avversario cade a terra");
-        setStatus("normal");
+        dispatch({ type: CHANGE_STATUS, payload: "normal" });
         setFight(null);
         setEnemyMessage("");
       } else {
@@ -58,12 +65,13 @@ const MyGame = (props) => {
       setEnemyMessage(
         `l'avversario ti colpisce con un ${dice} , infligendoti ${dice === 20 ? fight.attack * 2 : fight.attack} danni`
       );
-      let newMyHealth = myHealth;
-      setMyHealth((newMyHealth -= dice === 20 ? fight.attack * 2 : fight.attack));
+      let newMyHealth = playerInformation.health;
+      newMyHealth -= dice === 20 ? fight.attack * 2 : fight.attack;
+      dispatch({ type: CHANGE_HEALTH, payload: newMyHealth });
       if (newMyHealth <= 0) {
         dispatch({ type: DEATH, payload: 1 });
-        setStatus("normal");
-        setMyHealth(playerInformation.health);
+        dispatch({ type: CHANGE_STATUS, payload: "normal" });
+        dispatch({ type: CHANGE_HEALTH, payload: playerInformation.maxHealth });
       }
     } else {
       setEnemyMessage(`l'avversario ti manca con un ${dice} `);
@@ -82,8 +90,8 @@ const MyGame = (props) => {
       <Container style={{ maxWidth: "30%" }} className="d-flex ms-0">
         <p className="text-light">Punti ferita :</p>
         <ProgressBar
-          now={(100 * myHealth) / playerInformation.health}
-          label={`${myHealth} / ${playerInformation.health}`}
+          now={(100 * playerInformation.health) / playerInformation.maxHealth}
+          label={`${playerInformation.health} / ${playerInformation.maxHealth}`}
           variant="danger"
           style={{ width: "40%" }}
           className="mt-1 ms-2"
