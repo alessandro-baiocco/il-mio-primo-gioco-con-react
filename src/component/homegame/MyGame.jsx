@@ -8,6 +8,7 @@ const MyGame = (props) => {
   const playerInformation = useSelector((state) => state.player);
   const coordinates = useSelector((state) => state.coordinates);
   const status = useSelector((state) => state.player.status);
+  const [loot, setLoot] = useState(null);
   const [fight, setFight] = useState(null);
   const [playerMessage, setPlayerMessage] = useState(`${props.stages[coordinates.stages].presentation} `);
   const [enemyMessage, setEnemyMessage] = useState("");
@@ -32,6 +33,10 @@ const MyGame = (props) => {
       dispatch({ type: CHANGE_STATUS, payload: "fight" });
       setPlayerMessage(`un ${fight.name} ti blocca la strada`);
       setEnemiesHealth(fight.health);
+    } else if (props.stages[coordinates.stages].tresure.includes(coordinates.position + 1)) {
+      setLoot(props.items[Math.floor(Math.random() * 9)]);
+      dispatch({ type: CHANGE_STATUS, payload: "looting" });
+      setPlayerMessage("hai trovato una cassa in mezzo al tuo percorso vuoi aprirlo?");
     } else {
       setPlayerMessage(`hai fatto un'altro passo`);
     }
@@ -91,96 +96,120 @@ const MyGame = (props) => {
   };
 
   return (
-    <Container
-      style={{
-        border: "cyan solid 2px",
-        minHeight: "80vh",
-        backgroundImage: `${props.stages[coordinates.stages].background}`,
-        position: "relative",
-      }}
-    >
-      <Container style={{ maxWidth: "30%" }} className="d-flex ms-0">
-        <p className="text-light">Punti ferita :</p>
-        <ProgressBar
-          now={(100 * playerInformation.health) / playerInformation.maxHealth}
-          label={`${playerInformation.health} / ${playerInformation.maxHealth}`}
-          variant="danger"
-          style={{ width: "40%" }}
-          className="mt-1 ms-2"
-        />
-      </Container>
-      {status === "fight" && (
-        <Container className="d-flex justify-content-center">
-          <ProgressBar
-            now={(100 * enemiesHealth) / fight.health}
-            label={`${enemiesHealth} / ${fight.health}`}
-            variant="success"
-            style={{ width: "20%", position: "absolute" }}
-            className="mt-1 ms-2"
-          />
-          <img
-            src={fight.image}
-            alt="enemy-sprite"
-            className="img-fluid"
-            style={{ maxWidth: "360px", maxHeight: "360px" }}
-          />
-        </Container>
-      )}
-
+    <>
       <Container
         style={{
-          background: "black",
-          position: "absolute",
-          height: "30%",
-          width: "calc(100% - 2px)",
-          bottom: "0px",
-          left: "0px",
-          border: "white 4px solid ",
-          margin: "1px",
+          border: "cyan solid 2px",
+          minHeight: "80vh",
+          backgroundImage: `${props.stages[coordinates.stages].background}`,
+          position: "relative",
         }}
       >
-        <p className="mt-2 ms-2 text-success">{playerMessage}</p>
-
-        {isMyTurn && status === "fight" && enemiesHealth > 0 && (
-          <>
-            <p className="text-danger ms-2 ">{enemyMessage}</p>
-            <Button
-              variant="outline-danger"
-              onClick={() => {
-                attack();
-              }}
-              style={{ position: "absolute", bottom: "4px", left: "100px" }}
-            >
-              attacca
-            </Button>
-          </>
+        <Container style={{ maxWidth: "30%" }} className="d-flex ms-0">
+          <p className="text-light">Punti ferita :</p>
+          <ProgressBar
+            now={(100 * playerInformation.health) / playerInformation.maxHealth}
+            label={`${playerInformation.health} / ${playerInformation.maxHealth}`}
+            variant="danger"
+            style={{ width: "40%" }}
+            className="mt-1 ms-2"
+          />
+        </Container>
+        {status === "fight" && (
+          <Container className="d-flex justify-content-center">
+            <ProgressBar
+              now={(100 * enemiesHealth) / fight.health}
+              label={`${enemiesHealth} / ${fight.health}`}
+              variant="success"
+              style={{ width: "20%", position: "absolute" }}
+              className="mt-1 ms-2"
+            />
+            <img
+              src={fight.image}
+              alt="enemy-sprite"
+              className="img-fluid"
+              style={{ maxWidth: "360px", maxHeight: "360px" }}
+            />
+          </Container>
         )}
-        {status === "normal" &&
-          (coordinates.position < 10 ? (
-            <Button
-              variant="outline-primary"
-              onClick={() => {
-                dispatch(makeAStep(coordinates.position + 1));
-                enterInFight();
-              }}
-              style={{ position: "absolute", bottom: "4px", left: "6px" }}
-            >
-              vai avanti
-            </Button>
-          ) : (
-            <Button
-              variant="outline-primary"
-              onClick={() => {
-                dispatch(nextLevel(0));
-                setPlayerMessage(`${props.stages[coordinates.stages].presentation} `);
-              }}
-              style={{ position: "absolute", bottom: "4px", left: "6px" }}
-            >
-              prossimo livello
-            </Button>
-          ))}
+
+        <Container
+          style={{
+            background: "black",
+            position: "absolute",
+            height: "30%",
+            width: "calc(100% - 2px)",
+            bottom: "0px",
+            left: "0px",
+            border: "white 4px solid ",
+            margin: "1px",
+          }}
+        >
+          <p className="mt-2 ms-2 text-success">{playerMessage}</p>
+
+          {isMyTurn && status === "fight" && enemiesHealth > 0 && (
+            <>
+              <p className="text-danger ms-2 ">{enemyMessage}</p>
+              <Button
+                variant="outline-danger"
+                onClick={() => {
+                  attack();
+                }}
+                style={{ position: "absolute", bottom: "4px", left: "100px" }}
+              >
+                attacca
+              </Button>
+            </>
+          )}
+          {status === "looting" && (
+            <>
+              <Button
+                variant="outline-primary"
+                onClick={() => {
+                  dispatch(makeAStep(coordinates.position + 1));
+                  enterInFight();
+                }}
+                style={{ position: "absolute", bottom: "4px", left: "6px" }}
+              >
+                Vai Avanti
+              </Button>
+
+              <Button
+                variant="outline-warning"
+                onClick={() => {}}
+                style={{ position: "absolute", bottom: "4px", left: "120px" }}
+              >
+                Sacchegia
+              </Button>
+            </>
+          )}
+          {status === "normal" &&
+            (coordinates.position < 10 ? (
+              <Button
+                variant="outline-primary"
+                onClick={() => {
+                  dispatch(makeAStep(coordinates.position + 1));
+                  enterInFight();
+                }}
+                style={{ position: "absolute", bottom: "4px", left: "6px" }}
+              >
+                vai avanti
+              </Button>
+            ) : (
+              <Button
+                variant="outline-primary"
+                onClick={() => {
+                  dispatch(nextLevel(0));
+                  setPlayerMessage(`${props.stages[coordinates.stages].presentation} `);
+                }}
+                style={{ position: "absolute", bottom: "4px", left: "6px" }}
+              >
+                prossimo livello
+              </Button>
+            ))}
+        </Container>
       </Container>
-    </Container>
+    </>
   );
 };
 

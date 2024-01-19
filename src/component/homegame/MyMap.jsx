@@ -40,6 +40,13 @@ const MyMap = (props) => {
               alt="fight-room"
             />
           )}
+          {props.stages[props.level].tresure.includes(i) && (
+            <img
+              src={"https://cdn.icon-icons.com/icons2/2248/PNG/512/treasure_chest_icon_135086.png"}
+              className={`${i === props.position ? "d-none" : ""} img-fluid`}
+              alt="tresure-room"
+            />
+          )}
 
           <img
             src={"https://www.freeiconspng.com/thumbs/person-icon/clipart--person-icon--cliparts-15.png"}
