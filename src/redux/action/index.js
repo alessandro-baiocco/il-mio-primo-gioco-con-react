@@ -7,13 +7,13 @@ export const CHANGE_WEAPON = "CHANGE_WEAPON";
 export const CHANGE_ARMOR = "CHANGE_ARMOR";
 export const CHANGE_SHIELD = "CHANGE_SHIELD";
 
-export const makeAStep = () => {
+export const makeAStep = (level) => {
   return async (dispatch, getState) => {
-    dispatch({ type: GO_AHEAD, payload: 1 });
+    dispatch({ type: GO_AHEAD, payload: level });
   };
 };
-export const nextLevel = () => {
+export const nextLevel = (nextStage) => {
   return async (dispatch, getState) => {
-    dispatch({ type: NEXT_LEVEL, payload: 1 });
+    dispatch({ type: NEXT_LEVEL, payload: nextStage });
   };
 };

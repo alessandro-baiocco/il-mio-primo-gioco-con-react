@@ -9,23 +9,25 @@ const MyGame = (props) => {
   const coordinates = useSelector((state) => state.coordinates);
   const status = useSelector((state) => state.player.status);
   const [fight, setFight] = useState(null);
-  const [playerMessage, setPlayerMessage] = useState(`${props.stages[coordinates.stages.length - 1].presentation} `);
+  const [playerMessage, setPlayerMessage] = useState(`${props.stages[coordinates.stages].presentation} `);
   const [enemyMessage, setEnemyMessage] = useState("");
   const [enemiesHealth, setEnemiesHealth] = useState();
+  const [isMyTurn, setIsMyTurn] = useState(true);
 
+  //------------------------------esplorazione----------------------------------------
   const enterInFight = () => {
-    if (props.stages[coordinates.stages.length - 1].boss.includes(coordinates.position.length + 1)) {
+    if (props.stages[coordinates.stages].boss.includes(coordinates.position + 2)) {
       setFight(props.boss[0]);
     }
-    if (props.stages[coordinates.stages.length - 1].fight.includes(coordinates.position.length + 1)) {
+    if (props.stages[coordinates.stages].fight.includes(coordinates.position + 2)) {
       setFight(props.enemies[Math.floor(Math.random() * 2)]);
     }
 
-    if (props.stages[coordinates.stages.length - 1].fight.includes(coordinates.position.length)) {
+    if (props.stages[coordinates.stages].fight.includes(coordinates.position + 1)) {
       dispatch({ type: CHANGE_STATUS, payload: "fight" });
       setPlayerMessage(`un ${fight.name} ti blocca la strada`);
       setEnemiesHealth(fight.health);
-    } else if (props.stages[coordinates.stages.length - 1].boss.includes(coordinates.position.length)) {
+    } else if (props.stages[coordinates.stages].boss.includes(coordinates.position + 1)) {
       setFight(props.boss[0]);
       dispatch({ type: CHANGE_STATUS, payload: "fight" });
       setPlayerMessage(`un ${fight.name} ti blocca la strada`);
@@ -34,7 +36,10 @@ const MyGame = (props) => {
       setPlayerMessage(`hai fatto un'altro passo`);
     }
   };
+
+  //-------------------turno giocatore--------------------------------------------------------
   const attack = () => {
+    setIsMyTurn(false);
     let dice = Math.floor(Math.random() * 20 + 1);
     if (dice >= fight.armorClass) {
       let newEnemiesHelth = enemiesHealth;
@@ -50,18 +55,24 @@ const MyGame = (props) => {
         dispatch({ type: CHANGE_STATUS, payload: "normal" });
         setFight(null);
         setEnemyMessage("");
+        setIsMyTurn(true);
       } else {
-        enemyTurn();
+        setTimeout(() => {
+          enemyTurn();
+        }, 2000);
       }
     } else {
       setPlayerMessage(`hai mancato ${fight.name} facendo ${dice} sul dado`);
-      enemyTurn();
+      setTimeout(() => {
+        enemyTurn();
+      }, 2000);
     }
   };
 
+  //-------------------turno nemico-----------------------------------------------------
   const enemyTurn = () => {
     let dice = Math.floor(Math.random() * 20 + 1);
-    if (dice >= playerInformation.armorClass) {
+    if (dice + fight.bonus >= playerInformation.armorClass) {
       setEnemyMessage(
         `l'avversario ti colpisce con un ${dice} , infligendoti ${dice === 20 ? fight.attack * 2 : fight.attack} danni`
       );
@@ -69,13 +80,14 @@ const MyGame = (props) => {
       newMyHealth -= dice === 20 ? fight.attack * 2 : fight.attack;
       dispatch({ type: CHANGE_HEALTH, payload: newMyHealth });
       if (newMyHealth <= 0) {
-        dispatch({ type: DEATH, payload: 1 });
+        dispatch({ type: DEATH, payload: 0 });
         dispatch({ type: CHANGE_STATUS, payload: "normal" });
         dispatch({ type: CHANGE_HEALTH, payload: playerInformation.maxHealth });
       }
     } else {
       setEnemyMessage(`l'avversario ti manca con un ${dice} `);
     }
+    setIsMyTurn(true);
   };
 
   return (
@@ -129,7 +141,7 @@ const MyGame = (props) => {
       >
         <p className="mt-2 ms-2 text-success">{playerMessage}</p>
 
-        {status === "fight" && enemiesHealth > 0 && (
+        {isMyTurn && status === "fight" && enemiesHealth > 0 && (
           <>
             <p className="text-danger ms-2 ">{enemyMessage}</p>
             <Button
@@ -144,11 +156,11 @@ const MyGame = (props) => {
           </>
         )}
         {status === "normal" &&
-          (coordinates.position.length < 10 ? (
+          (coordinates.position < 10 ? (
             <Button
               variant="outline-primary"
               onClick={() => {
-                dispatch(makeAStep());
+                dispatch(makeAStep(coordinates.position + 1));
                 enterInFight();
               }}
               style={{ position: "absolute", bottom: "4px", left: "6px" }}
@@ -159,8 +171,8 @@ const MyGame = (props) => {
             <Button
               variant="outline-primary"
               onClick={() => {
-                dispatch(nextLevel());
-                setPlayerMessage(`${props.stages[coordinates.stages.length - 1].presentation} `);
+                dispatch(nextLevel(0));
+                setPlayerMessage(`${props.stages[coordinates.stages].presentation} `);
               }}
               style={{ position: "absolute", bottom: "4px", left: "6px" }}
             >

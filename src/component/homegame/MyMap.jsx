@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { Container } from "react-bootstrap";
 
 const MyMap = (props) => {
-  let generateLevels = Array.from(Array(props.stages[props.level.length - 1].levels).keys());
+  let generateLevels = Array.from(Array(props.stages[props.level].levels).keys());
 
-  useEffect(() => {}, [props.position.length]);
+  useEffect(() => {}, [props.position]);
 
   return (
     <Container className="d-flex flex-wrap" style={{ position: "relative" }}>
@@ -26,24 +26,24 @@ const MyMap = (props) => {
           key={`room-${i}`}
         >
           {`stanza ${i + 1}`}
-          {props.stages[props.level.length - 1].fight.includes(i) && (
+          {props.stages[props.level].fight.includes(i) && (
             <img
               src={"https://static.thenounproject.com/png/4728546-200.png"}
-              className={`${i === props.position.length - 1 ? "d-none" : ""} img-fluid`}
+              className={`${i === props.position ? "d-none" : ""} img-fluid`}
               alt="fight-room"
             />
           )}
-          {props.stages[props.level.length - 1].boss.includes(i) && (
+          {props.stages[props.level].boss.includes(i) && (
             <img
               src={"https://cdn3.iconfinder.com/data/icons/video-game-items-concepts/128/skull-2-512.png"}
-              className={`${i === props.position.length - 1 ? "d-none" : ""} img-fluid`}
+              className={`${i === props.position ? "d-none" : ""} img-fluid`}
               alt="fight-room"
             />
           )}
 
           <img
             src={"https://www.freeiconspng.com/thumbs/person-icon/clipart--person-icon--cliparts-15.png"}
-            className={`${i === props.position.length - 1 ? "" : "d-none"}`}
+            className={`${i === props.position ? "" : "d-none"}`}
             alt="player-position"
             style={{
               objectFit: "cover",
