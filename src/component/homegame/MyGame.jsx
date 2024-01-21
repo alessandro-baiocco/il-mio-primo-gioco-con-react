@@ -10,8 +10,10 @@ import {
   CHANGE_STATUS,
   CHANGE_WEAPON,
   CHANGE_ARMOR,
+  CHOOSE_ENEMY,
+  ENEMY_DEFEATED,
+  ENEMY_HIT,
 } from "../../redux/action";
-import equipment from "../../redux/reducers/equipment";
 
 const MyGame = (props) => {
   const dispatch = useDispatch();
@@ -19,11 +21,11 @@ const MyGame = (props) => {
   const coordinates = useSelector((state) => state.coordinates);
   const status = useSelector((state) => state.player.status);
   const inventory = useSelector((state) => state.equipment);
+  const fight = useSelector((state) => state.fight.enemies);
   const [loot, setLoot] = useState(null);
-  const [fight, setFight] = useState(null);
   const [playerMessage, setPlayerMessage] = useState(`${props.stages[coordinates.stages].presentation} `);
   const [enemyMessage, setEnemyMessage] = useState("");
-  const [enemiesHealth, setEnemiesHealth] = useState();
+  const enemiesHealth = useSelector((state) => state.fight.enemies.health);
   const [isMyTurn, setIsMyTurn] = useState(true);
   const [lootModal, setLootModal] = useState(false);
   const [playerInfo, setPlayerInfo] = useState(false);
@@ -53,21 +55,18 @@ const MyGame = (props) => {
   //------------------------------esplorazione----------------------------------------
   const enterInFight = () => {
     if (props.stages[coordinates.stages].boss.includes(coordinates.position + 2)) {
-      setFight(props.boss[0]);
+      dispatch({ type: CHOOSE_ENEMY, payload: props.boss[coordinates.stages] });
     }
     if (props.stages[coordinates.stages].fight.includes(coordinates.position + 2)) {
-      setFight(props.enemies[Math.floor(Math.random() * 2)]);
+      dispatch({ type: CHOOSE_ENEMY, payload: props.enemies[Math.floor(Math.random(coordinates.position) * 2)] });
     }
 
     if (props.stages[coordinates.stages].fight.includes(coordinates.position + 1)) {
       dispatch({ type: CHANGE_STATUS, payload: "fight" });
       setPlayerMessage(`un ${fight.name} ti blocca la strada`);
-      setEnemiesHealth(fight.health);
     } else if (props.stages[coordinates.stages].boss.includes(coordinates.position + 1)) {
-      setFight(props.boss[0]);
       dispatch({ type: CHANGE_STATUS, payload: "fight" });
       setPlayerMessage(`un ${fight.name} ti blocca la strada`);
-      setEnemiesHealth(fight.health);
     } else if (props.stages[coordinates.stages].tresure.includes(coordinates.position + 1)) {
       setLoot(props.items[Math.floor(Math.random() * 9)]);
       dispatch({ type: CHANGE_STATUS, payload: "looting" });
@@ -83,17 +82,24 @@ const MyGame = (props) => {
     let dice = Math.floor(Math.random() * 20 + 1);
     if (dice >= fight.armorClass) {
       let newEnemiesHelth = enemiesHealth;
-      newEnemiesHelth -= dice === 20 ? playerInformation.attack * 2 : playerInformation.attack;
-      setEnemiesHealth(newEnemiesHelth);
+      dispatch({
+        type: ENEMY_HIT,
+        payload: (newEnemiesHelth -=
+          dice === 20
+            ? playerInformation.attack * 2 + inventory.weapon.bonusAT
+            : playerInformation.attack + inventory.weapon.bonusAT),
+      });
       setPlayerMessage(
         `riesci a colpire ${fight.name} con ${dice} sul dado, infligendogli ${
-          dice === 20 ? playerInformation.attack * 2 : playerInformation.attack
+          dice === 20
+            ? playerInformation.attack * 2 + inventory.weapon.bonusAT
+            : playerInformation.attack + inventory.weapon.bonusAT
         } danni`
       );
       if (newEnemiesHelth <= 0) {
         setPlayerMessage("l'avversario cade a terra");
         dispatch({ type: CHANGE_STATUS, payload: "normal" });
-        setFight(null);
+        dispatch({ type: ENEMY_DEFEATED, payload: null });
         setEnemyMessage("");
         setIsMyTurn(true);
       } else {
@@ -134,6 +140,7 @@ const MyGame = (props) => {
 
   return (
     <>
+      {console.log(fight)}
       <Container
         style={{
           border: "cyan solid 2px",
@@ -155,8 +162,8 @@ const MyGame = (props) => {
         {status === "fight" && (
           <Container className="d-flex justify-content-center">
             <ProgressBar
-              now={(100 * enemiesHealth) / fight.health}
-              label={`${enemiesHealth} / ${fight.health}`}
+              now={(100 * fight.health) / fight.maxHealth}
+              label={`${fight.health} / ${fight.maxHealth}`}
               variant="success"
               style={{ width: "20%", position: "absolute" }}
               className="mt-1 ms-2"

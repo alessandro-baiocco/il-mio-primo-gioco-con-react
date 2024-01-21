@@ -1,4 +1,4 @@
-import { CHANGE_ARMOR, CHANGE_SHIELD, CHANGE_WEAPON } from "../action";
+import { CHANGE_ARMOR, CHANGE_SHIELD, CHANGE_WEAPON, DEATH } from "../action";
 
 const initialState = {
   shield: {
@@ -37,6 +37,28 @@ const equipment = (state = initialState, action) => {
       return {
         ...state,
         weapon: action.payload,
+      };
+    case DEATH:
+      return {
+        ...state,
+        weapon: {
+          name: "nessuna",
+          bonusAT: 0,
+          image: "",
+          type: "",
+        },
+        shield: {
+          name: "nessuna",
+          bonusAC: 0,
+          image: "",
+          type: "",
+        },
+        armor: {
+          name: "nessuno",
+          defence: 0,
+          image: "",
+          type: "",
+        },
       };
     default:
       return state;

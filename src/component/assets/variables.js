@@ -16,6 +16,7 @@ export const enemies = [
   {
     name: "goblin",
     health: 20,
+    maxHealth: 20,
     attack: 2,
     defence: 0,
     image: "https://png.pngtree.com/png-clipart/20211022/ourmid/pngtree-goblin-goblin-elf-png-image_4004208.png",
@@ -25,6 +26,7 @@ export const enemies = [
   {
     name: "slime",
     health: 10,
+    maxHealth: 10,
     attack: 1,
     defence: 0,
     image: "https://toppng.com/uploads/preview/slime-slime-11562980326osnwivy7ba.png",
@@ -37,6 +39,7 @@ export const boss = [
   {
     name: "orco",
     health: 60,
+    maxHealth: 60,
     attack: 8,
     defence: 2,
     image: "https://i.pinimg.com/originals/91/35/2c/91352c20549a52f152870b4ad1ce1b82.png",

@@ -5,11 +5,13 @@ import persistStore from "redux-persist/es/persistStore";
 import player from "../reducers/player";
 import coordinates from "../reducers/coordinates";
 import equipment from "../reducers/equipment";
+import fight from "../reducers/fight";
 
 const rootReducer = combineReducers({
   player: player,
   coordinates: coordinates,
   equipment: equipment,
+  fight: fight,
 });
 
 const persistConfig = { key: "root", storage };
