@@ -23,6 +23,7 @@ const MyMap = (props) => {
             overflow: "hidden",
             position: "relative",
           }}
+          className="d-none d-md-inline"
           key={`room-${i}`}
         >
           {`stanza ${i + 1}`}
@@ -60,6 +61,9 @@ const MyMap = (props) => {
           />
         </Container>
       ))}
+      <Container className="d-md-none" style={{ background: "white", height: "100px" }}>
+        <p>posizione attuale: {props.position}</p>
+      </Container>
     </Container>
   );
 };

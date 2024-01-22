@@ -129,9 +129,8 @@ const MyGame = (props) => {
       newMyHealth -= dice === 20 ? fight.attack * 2 : fight.attack;
       dispatch({ type: CHANGE_HEALTH, payload: newMyHealth });
       if (newMyHealth <= 0) {
-        dispatch({ type: DEATH, payload: 0 });
-        dispatch({ type: CHANGE_STATUS, payload: "normal" });
-        dispatch({ type: CHANGE_HEALTH, payload: playerInformation.maxHealth });
+        setPlayerMessage("il tuo nemico esegue il colpo di grazia e tu cadi a terra morto");
+        dispatch({ type: CHANGE_STATUS, payload: "death" });
       }
     } else {
       setEnemyMessage(`l'avversario ti manca con un ${dice} `);
@@ -149,8 +148,8 @@ const MyGame = (props) => {
           position: "relative",
         }}
       >
-        <Container style={{ maxWidth: "30%" }} className="d-flex ms-0">
-          <p className="text-light">Punti ferita :</p>
+        <Container style={{ maxWidth: "80%" }} className="d-flex ms-0">
+          <p className="text-light d-none d-md-inline">Punti ferita :</p>
           <ProgressBar
             now={(100 * playerInformation.health) / playerInformation.maxHealth}
             label={`${playerInformation.health} / ${playerInformation.maxHealth}`}
@@ -263,6 +262,20 @@ const MyGame = (props) => {
                 prossimo livello
               </Button>
             ))}
+          {status === "death" && (
+            <Button
+              variant="outline-secondary"
+              onClick={() => {
+                dispatch({ type: CHANGE_HEALTH, payload: playerInformation.maxHealth });
+                dispatch({ type: DEATH, payload: 0 });
+                dispatch({ type: CHANGE_STATUS, payload: "normal" });
+                setPlayerMessage(`${props.stages[coordinates.stages].presentation} `);
+              }}
+              style={{ position: "absolute", bottom: "4px", left: "6px" }}
+            >
+              Ricomincia
+            </Button>
+          )}
           <Button
             variant="outline-warning"
             onClick={() => {
