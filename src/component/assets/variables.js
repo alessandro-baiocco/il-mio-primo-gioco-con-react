@@ -22,6 +22,7 @@ export const enemies = [
     image: "https://png.pngtree.com/png-clipart/20211022/ourmid/pngtree-goblin-goblin-elf-png-image_4004208.png",
     armorClass: 8,
     bonus: 0,
+    description: "un nemico non molto sveglio ma comunque pericoloso specialmente in gruppo",
   },
   {
     name: "slime",
@@ -32,6 +33,7 @@ export const enemies = [
     image: "https://toppng.com/uploads/preview/slime-slime-11562980326osnwivy7ba.png",
     armorClass: 6,
     bonus: +2,
+    description: "questo essere gelatinoso può sembrare puccioso ma in verità è molto pericoloso",
   },
 ];
 
@@ -45,6 +47,8 @@ export const boss = [
     image: "https://i.pinimg.com/originals/91/35/2c/91352c20549a52f152870b4ad1ce1b82.png",
     armorClass: 2,
     bonus: -4,
+    description:
+      "una creatura letale quanto lenta, i suoi attachi sono facili da schivare ma se ti prendono ti faranno rimpiangere di aver iniziato questo scontro",
   },
 ];
 

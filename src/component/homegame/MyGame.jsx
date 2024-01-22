@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Modal, ProgressBar, Row } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Col, Container, Modal, ProgressBar, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
   CHANGE_SHIELD,
@@ -29,7 +29,8 @@ const MyGame = (props) => {
   const [isMyTurn, setIsMyTurn] = useState(true);
   const [lootModal, setLootModal] = useState(false);
   const [playerInfo, setPlayerInfo] = useState(false);
-  //------------------------------genera e prendi il loot
+  const [monsterInfo, setMonsterInfo] = useState(false);
+  //------------------------------genera e prendi il loot---------------------------
   const changeEquipment = () => {
     switch (loot.type) {
       case "shield": {
@@ -140,7 +141,6 @@ const MyGame = (props) => {
 
   return (
     <>
-      {console.log(fight)}
       <Container
         style={{
           border: "cyan solid 2px",
@@ -202,6 +202,15 @@ const MyGame = (props) => {
                 style={{ position: "absolute", bottom: "4px", left: "100px" }}
               >
                 attacca
+              </Button>
+              <Button
+                variant="outline-info"
+                onClick={() => {
+                  setMonsterInfo(true);
+                }}
+                style={{ position: "absolute", bottom: "4px", left: "180px" }}
+              >
+                osserva
               </Button>
             </>
           )}
@@ -349,6 +358,23 @@ const MyGame = (props) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setPlayerInfo(false)}>
+            Chiudi
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* ----------------------------------modale per le info del nemico-------------------------------- */}
+      <Modal show={monsterInfo} onHide={() => setMonsterInfo(false)} className="btn-close-white" size={"lg"}>
+        <Modal.Header closeButton>
+          <Modal.Title>{fight.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{fight.description}</p>
+          <p>attaco: {fight.attack}</p>
+          <p>bonus: {fight.bonus}</p>
+          <p>classe armatura: {fight.armorClass}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setMonsterInfo(false)}>
             Chiudi
           </Button>
         </Modal.Footer>
