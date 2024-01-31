@@ -2,7 +2,7 @@ import { CHANGE_ARMOR, CHANGE_SHIELD, CHANGE_WEAPON, DEATH } from "../action";
 
 const initialState = {
   shield: {
-    name: "nessuna",
+    name: "nessuno",
     bonusAC: 0,
     image: "",
     type: "",
@@ -14,7 +14,7 @@ const initialState = {
     type: "",
   },
   armor: {
-    name: "nessuno",
+    name: "nessuna",
     defence: 0,
     image: "",
     type: "",

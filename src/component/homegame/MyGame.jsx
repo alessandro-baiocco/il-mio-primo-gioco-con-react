@@ -14,6 +14,7 @@ import {
   ENEMY_DEFEATED,
   ENEMY_HIT,
 } from "../../redux/action";
+import equipment from "../../redux/reducers/equipment";
 
 const MyGame = (props) => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const MyGame = (props) => {
   const [isMyTurn, setIsMyTurn] = useState(true);
   const [lootModal, setLootModal] = useState(false);
   const [playerInfo, setPlayerInfo] = useState(false);
+  const [playerEquipment, setPlayerEquipment] = useState(false);
   const [monsterInfo, setMonsterInfo] = useState(false);
   //------------------------------genera e prendi il loot---------------------------
   const changeEquipment = () => {
@@ -277,6 +279,15 @@ const MyGame = (props) => {
             </Button>
           )}
           <Button
+            variant="outline-success"
+            onClick={() => {
+              setPlayerInfo(true);
+            }}
+            style={{ position: "absolute", bottom: "4px", right: "110px" }}
+          >
+            Statistiche
+          </Button>
+          <Button
             variant="outline-warning"
             onClick={() => {
               setPlayerInfo(true);
@@ -325,6 +336,22 @@ const MyGame = (props) => {
           <Modal.Title>Statistiche</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <p>attaco: {playerInformation.attack}</p>
+          <p>classe armatura: {playerInformation.armorClass}</p>
+          <p>difesa: {inventory.armor.defence}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setPlayerInfo(false)}>
+            Chiudi
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* ----------------------------------modale per l'equip del giocatore-------------------------------- */}
+      <Modal show={playerEquipment} onHide={() => setPlayerEquipment(false)} className="btn-close-white" size={"lg"}>
+        <Modal.Header closeButton>
+          <Modal.Title>Equipaggiamento</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
           <Row>
             <Col xs={12} md={6} lg={4}>
               <p className="fs-3">armatura: {inventory.armor.name}</p>
@@ -370,7 +397,7 @@ const MyGame = (props) => {
           </Row>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setPlayerInfo(false)}>
+          <Button variant="secondary" onClick={() => setPlayerEquipment(false)}>
             Chiudi
           </Button>
         </Modal.Footer>
