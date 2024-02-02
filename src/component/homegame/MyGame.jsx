@@ -131,8 +131,9 @@ const MyGame = (props) => {
       newMyHealth -= dice === 20 ? fight.attack * 2 : fight.attack;
       dispatch({ type: CHANGE_HEALTH, payload: newMyHealth });
       if (newMyHealth <= 0) {
-        setPlayerMessage("il tuo nemico esegue il colpo di grazia e tu cadi a terra morto");
+        setPlayerMessage("il tuo nemico esegue il colpo di grazia e tu cadi a terra perdendo i sensi");
         dispatch({ type: CHANGE_STATUS, payload: "death" });
+        setEnemyMessage("");
       }
     } else {
       setEnemyMessage(`l'avversario ti manca con un ${dice} `);
@@ -290,7 +291,7 @@ const MyGame = (props) => {
           <Button
             variant="outline-warning"
             onClick={() => {
-              setPlayerInfo(true);
+              setPlayerEquipment(true);
             }}
             style={{ position: "absolute", bottom: "4px", right: "6px" }}
           >

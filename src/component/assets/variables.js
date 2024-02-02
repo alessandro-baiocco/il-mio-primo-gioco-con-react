@@ -10,6 +10,16 @@ export const stages = [
     presentation:
       "ti dai un'occhiata intorno e noti il sole che a malapena si vede tra tutti i tronchi degli alberi è capisci subito di trovarti nella foresta ",
   },
+  {
+    name: "swamp",
+    background: "url('https://jamesrpgart.com/wp-content/uploads/2023/03/Swamp-Campsite-Thumbnail.jpg')",
+    levels: 10,
+    fight: [2, 6],
+    boss: [9],
+    tresure: [4],
+    presentation:
+      "si sentono insetti di ogni tipo vedi ragnatele ovunque l'acqua ti arriva alle ginocchia questa deve essere la palude",
+  },
 ];
 
 export const enemies = [
