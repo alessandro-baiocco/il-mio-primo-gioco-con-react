@@ -14,7 +14,6 @@ import {
   ENEMY_DEFEATED,
   ENEMY_HIT,
 } from "../../redux/action";
-import equipment from "../../redux/reducers/equipment";
 import LootModal from "./modals/LootModal";
 import PlayerInfo from "./modals/PlayerInfo";
 
@@ -51,7 +50,10 @@ const MyGame = (props) => {
       dispatch({ type: CHOOSE_ENEMY, payload: props.boss[coordinates.stages] });
     }
     if (props.stages[coordinates.stages].fight.includes(coordinates.position + 2)) {
-      dispatch({ type: CHOOSE_ENEMY, payload: props.enemies[Math.floor(Math.random(coordinates.position) * 2)] });
+      dispatch({
+        type: CHOOSE_ENEMY,
+        payload: props.enemies[Math.floor(Math.random(coordinates.position) * 3 + coordinates.stages * 3)],
+      });
     }
 
     if (props.stages[coordinates.stages].fight.includes(coordinates.position + 1)) {
@@ -78,9 +80,9 @@ const MyGame = (props) => {
       dispatch({
         type: ENEMY_HIT,
         payload: (newEnemiesHelth -=
-          dice === 20
+          (dice === 20
             ? playerInformation.attack * 2 + inventory.weapon.bonusAT
-            : playerInformation.attack + inventory.weapon.bonusAT),
+            : playerInformation.attack + inventory.weapon.bonusAT) - fight.defence),
       });
       setPlayerMessage(
         `riesci a colpire ${fight.name} con ${dice} sul dado, infligendogli ${
@@ -118,7 +120,7 @@ const MyGame = (props) => {
         } danni`
       );
       let newMyHealth = playerInformation.health;
-      newMyHealth -= dice === 20 ? fight.attack * 2 : fight.attack;
+      newMyHealth -= (dice === 20 ? fight.attack * 2 : fight.attack) - inventory.armor.defence;
       dispatch({ type: CHANGE_HEALTH, payload: newMyHealth });
       if (newMyHealth <= 0) {
         setPlayerMessage("il tuo nemico esegue il colpo di grazia e tu cadi a terra perdendo i sensi");
@@ -138,6 +140,7 @@ const MyGame = (props) => {
           border: "cyan solid 2px",
           minHeight: "80vh",
           backgroundImage: `${props.stages[coordinates.stages].background}`,
+          objectFit: "fill",
           position: "relative",
         }}
       >
@@ -247,7 +250,7 @@ const MyGame = (props) => {
               <Button
                 variant="outline-primary"
                 onClick={() => {
-                  dispatch(nextLevel(0));
+                  dispatch(nextLevel(coordinates.stages + 1));
                   setPlayerMessage(`${props.stages[coordinates.stages].presentation} `);
                 }}
                 style={{ position: "absolute", bottom: "4px", left: "6px" }}

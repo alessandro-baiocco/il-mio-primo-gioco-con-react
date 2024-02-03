@@ -12,7 +12,7 @@ export const stages = [
   },
   {
     name: "swamp",
-    background: "url('https://jamesrpgart.com/wp-content/uploads/2023/03/Swamp-Campsite-Thumbnail.jpg')",
+    background: "url('https://pbs.twimg.com/media/EYZZBm8XYAAih1v.jpg')",
     levels: 10,
     fight: [2, 6],
     boss: [9],
@@ -62,7 +62,7 @@ export const enemies = [
   {
     name: "spider",
     health: 15,
-    maxHealth: 10,
+    maxHealth: 15,
     attack: 2,
     defence: 2,
     image:
@@ -104,7 +104,7 @@ export const boss = [
     attack: 8,
     defence: 2,
     image: "https://i.pinimg.com/originals/91/35/2c/91352c20549a52f152870b4ad1ce1b82.png",
-    armorClass: 2,
+    armorClass: 0,
     bonus: -4,
     description:
       "una creatura letale quanto lenta, i suoi attachi sono facili da schivare ma se ti prendono ti faranno rimpiangere di aver iniziato questo scontro",
