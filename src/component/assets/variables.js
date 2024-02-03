@@ -43,7 +43,56 @@ export const enemies = [
     image: "https://i.pinimg.com/originals/14/4f/ff/144fffe3ddcb5c2d68a724f9e57a1d57.png",
     armorClass: 6,
     bonus: +2,
-    description: "questo essere gelatinoso può sembrare puccioso ma in verità è molto pericoloso",
+    description:
+      "questo essere gelatinoso può sembrare puccioso ma in verità è molto pericoloso. il suo metodo è quello di inglobare gli avversari facendoli soffocare",
+  },
+  {
+    name: "wolf",
+    health: 6,
+    maxHealth: 6,
+    attack: 1,
+    defence: 0,
+    image:
+      "https://images.vexels.com/media/users/3/288762/isolated/preview/cb7438aba416f821d02d8ea45f65e8d8-howling-wolf-animal.png",
+    armorClass: 12,
+    bonus: +2,
+    description:
+      "il lupo è molto veloce è schiva velocemente gli attacchi tuttavia non ha armatura naturale e può essere sconfitto facilmente",
+  },
+  {
+    name: "spider",
+    health: 15,
+    maxHealth: 10,
+    attack: 2,
+    defence: 2,
+    image:
+      "https://img.freepik.com/premium-photo/giant-spider-lurking-shadows-fantasy-concept-illustration-painting-generative-ai_743201-14092.jpg",
+    armorClass: 6,
+    bonus: 0,
+    description: "l'incubo degli aracnofobici",
+  },
+  {
+    name: "witch",
+    health: 10,
+    maxHealth: 10,
+    attack: 4,
+    defence: 0,
+    image: "https://4vector.com/i/free-vector-old-witch-clip-art_108274_Old_Witch_clip_art_hight.png",
+    armorClass: 4,
+    bonus: +2,
+    description: "questa signora si è ritirata in questa parte della foresta per studiare le arti oscure",
+  },
+  {
+    name: "bandit",
+    health: 10,
+    maxHealth: 10,
+    attack: 2,
+    defence: 0,
+    image:
+      "https://cdn2.iconfinder.com/data/icons/avatar-classes-role-playing-game-2/340/character_rpg_thief_crime_knife_bandit_weapon-512.png",
+    armorClass: 8,
+    bonus: +2,
+    description: "o la borsa o la vita",
   },
 ];
 
@@ -59,6 +108,18 @@ export const boss = [
     bonus: -4,
     description:
       "una creatura letale quanto lenta, i suoi attachi sono facili da schivare ma se ti prendono ti faranno rimpiangere di aver iniziato questo scontro",
+  },
+  {
+    name: "ent",
+    health: 100,
+    maxHealth: 100,
+    attack: 2,
+    defence: 2,
+    image: "https://i.pinimg.com/originals/49/9b/f3/499bf301a12214c39910a3d9f404ffb5.jpg",
+    armorClass: 8,
+    bonus: -2,
+    description:
+      "gli ent sono sempre stati ostili a tutti i tipi di creature che non abitano nei boschi sono molto resistenti",
   },
 ];
 
@@ -86,21 +147,21 @@ export const items = [
   },
   {
     type: "shield",
-    name: "scudo d'ossidiana",
-    image: "https://banner2.cleanpng.com/20171210/706/purple-shield-5a2d2393731a04.7687141515129076674715.jpg",
-    bonusAC: 2,
+    name: "scudo di ferro",
+    image: "https://freesvg.org/img/Shield_005_SPenguin.png",
+    bonusAC: 3,
   },
   {
     type: "shield",
     name: "scudo di cobalto",
     image: "https://i.pinimg.com/originals/56/3a/43/563a43cdaea49e971e5f105e2ab2b69d.png",
-    bonusAC: 3,
+    bonusAC: 4,
   },
   {
     type: "shield",
-    name: "scudo lavico",
+    name: "scudo di legno",
     image:
-      "https://e7.pngegg.com/pngimages/499/192/png-clipart-red-and-black-shield-illustration-shield-escutcheon-simple-flames-border-background-heart-logo.png",
+      "https://cdn3.iconfinder.com/data/icons/medieval-2d-rpg-game-items-weapons-armour-helmets-/26/GAME-SVG_--52-512.png",
     bonusAC: 2,
   },
   {

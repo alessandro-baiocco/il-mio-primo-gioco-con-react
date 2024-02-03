@@ -15,6 +15,8 @@ import {
   ENEMY_HIT,
 } from "../../redux/action";
 import equipment from "../../redux/reducers/equipment";
+import LootModal from "./modals/LootModal";
+import PlayerInfo from "./modals/PlayerInfo";
 
 const MyGame = (props) => {
   const dispatch = useDispatch();
@@ -33,26 +35,14 @@ const MyGame = (props) => {
   const [playerEquipment, setPlayerEquipment] = useState(false);
   const [monsterInfo, setMonsterInfo] = useState(false);
   //------------------------------genera e prendi il loot---------------------------
-  const changeEquipment = () => {
-    switch (loot.type) {
-      case "shield": {
-        dispatch({ type: CHANGE_SHIELD, payload: loot });
-        break;
-      }
-      case "weapon": {
-        dispatch({ type: CHANGE_WEAPON, payload: loot });
-        break;
-      }
-      case "armor": {
-        dispatch({ type: CHANGE_ARMOR, payload: loot });
-        break;
-      }
-      default: {
-        console.log("niente");
-      }
-    }
-    dispatch({ type: CHANGE_STATUS, payload: "normal" });
-    setPlayerMessage("hai sacchegiato il forziere e indossato l'equipagiamento");
+  const chooseMessage = (message) => {
+    setPlayerMessage(message);
+  };
+  const lootModalSet = () => {
+    setLootModal(false);
+  };
+  const playerInfoModalSet = () => {
+    setPlayerInfo(false);
   };
 
   //------------------------------esplorazione----------------------------------------
@@ -301,52 +291,16 @@ const MyGame = (props) => {
       </Container>
 
       {/* ----------------------------------modale per il loot-------------------------------- */}
-      <Modal show={lootModal} onHide={() => setLootModal(false)} className="btn-close-white">
-        <Modal.Header closeButton>
-          <Modal.Title>hai trovato {loot?.name}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <img src={loot?.image} alt={loot?.name} className="img-fluid" />
-          <p>
-            tipo: {loot?.type} , bonus :{" "}
-            {loot?.bonusAC !== undefined
-              ? `${loot?.bonusAC} classe armatura`
-              : loot?.bonusAT !== undefined
-              ? `${loot?.bonusAT} ai danni`
-              : `${loot?.defence} armatura`}{" "}
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setLootModal(false)}>
-            Chiudi
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              changeEquipment();
-              setLootModal(false);
-            }}
-          >
-            Equipaggia
-          </Button>
-        </Modal.Footer>
-      </Modal>
+
+      <LootModal show={lootModal} loot={loot} chooseMessage={chooseMessage} onHide={lootModalSet} />
+
       {/* ----------------------------------modale per le info del giocatore-------------------------------- */}
-      <Modal show={playerInfo} onHide={() => setPlayerInfo(false)} className="btn-close-white" size={"lg"}>
-        <Modal.Header closeButton>
-          <Modal.Title>Statistiche</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>attaco: {playerInformation.attack}</p>
-          <p>classe armatura: {playerInformation.armorClass}</p>
-          <p>difesa: {inventory.armor.defence}</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setPlayerInfo(false)}>
-            Chiudi
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <PlayerInfo
+        playerInformation={playerInformation}
+        inventory={inventory}
+        show={playerInfo}
+        onHide={playerInfoModalSet}
+      />
       {/* ----------------------------------modale per l'equip del giocatore-------------------------------- */}
       <Modal show={playerEquipment} onHide={() => setPlayerEquipment(false)} className="btn-close-white" size={"lg"}>
         <Modal.Header closeButton>
