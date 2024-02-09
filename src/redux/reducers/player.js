@@ -3,7 +3,7 @@ import { CHANGE_HEALTH, CHANGE_STATUS } from "../action";
 const initialState = {
   health: 40,
   maxHealth: 40,
-  attack: 3,
+  attack: 5,
   armorClass: 8,
   status: "normal",
 };
