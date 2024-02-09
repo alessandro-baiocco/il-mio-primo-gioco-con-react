@@ -18,7 +18,7 @@ export const stages = [
     boss: [9],
     tresure: [4],
     presentation:
-      "si sentono insetti di ogni tipo vedi ragnatele ovunque l'acqua ti arriva alle ginocchia questa deve essere la palude",
+      "si sentono insetti di ogni tipo vedi ragnatele ovunque, l'acqua ti arriva alle ginocchia questa deve essere la palude",
   },
 ];
 

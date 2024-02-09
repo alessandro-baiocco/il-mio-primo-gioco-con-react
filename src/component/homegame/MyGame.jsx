@@ -1,21 +1,20 @@
 import { useState } from "react";
-import { Button, Col, Container, Modal, ProgressBar, Row } from "react-bootstrap";
+import { Button, Container, ProgressBar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  CHANGE_SHIELD,
   DEATH,
   CHANGE_HEALTH,
   makeAStep,
   nextLevel,
   CHANGE_STATUS,
-  CHANGE_WEAPON,
-  CHANGE_ARMOR,
   CHOOSE_ENEMY,
   ENEMY_DEFEATED,
   ENEMY_HIT,
 } from "../../redux/action";
 import LootModal from "./modals/LootModal";
 import PlayerInfo from "./modals/PlayerInfo";
+import EquipmentModal from "./modals/EquipmentModal";
+import MonsterModal from "./modals/MonsterModal";
 
 const MyGame = (props) => {
   const dispatch = useDispatch();
@@ -33,17 +32,23 @@ const MyGame = (props) => {
   const [playerInfo, setPlayerInfo] = useState(false);
   const [playerEquipment, setPlayerEquipment] = useState(false);
   const [monsterInfo, setMonsterInfo] = useState(false);
-  //------------------------------genera e prendi il loot---------------------------
+  //------------------------------cambia messaggio---------------------------
   const chooseMessage = (message) => {
     setPlayerMessage(message);
   };
+  //----------------------codice per chiudere modali----------------------------------------
   const lootModalSet = () => {
     setLootModal(false);
   };
   const playerInfoModalSet = () => {
     setPlayerInfo(false);
   };
-
+  const playerEquipModalSet = () => {
+    setPlayerEquipment(false);
+  };
+  const monsterStatsModalSet = () => {
+    setMonsterInfo(false);
+  };
   //------------------------------esplorazione----------------------------------------
   const enterInFight = () => {
     if (props.stages[coordinates.stages].boss.includes(coordinates.position + 2)) {
@@ -77,19 +82,23 @@ const MyGame = (props) => {
     let dice = Math.floor(Math.random() * 20 + 1);
     if (dice >= fight.armorClass) {
       let newEnemiesHelth = enemiesHealth;
+      const myDamage =
+        (dice === 20
+          ? playerInformation.attack * 2 + inventory.weapon.bonusAT
+          : playerInformation.attack + inventory.weapon.bonusAT) - fight.defence;
+      console.log(myDamage);
+      if (myDamage > 0) {
+        newEnemiesHelth -= myDamage;
+      } else {
+        newEnemiesHelth -= 1;
+      }
+
       dispatch({
         type: ENEMY_HIT,
-        payload: (newEnemiesHelth -=
-          (dice === 20
-            ? playerInformation.attack * 2 + inventory.weapon.bonusAT
-            : playerInformation.attack + inventory.weapon.bonusAT) - fight.defence),
+        payload: newEnemiesHelth,
       });
       setPlayerMessage(
-        `riesci a colpire ${fight.name} con ${dice} sul dado, infligendogli ${
-          dice === 20
-            ? playerInformation.attack * 2 + inventory.weapon.bonusAT
-            : playerInformation.attack + inventory.weapon.bonusAT
-        } danni`
+        `riesci a colpire ${fight.name} con ${dice} sul dado, infligendogli ${myDamage > 0 ? myDamage : 1} danni`
       );
       if (newEnemiesHelth <= 0) {
         setPlayerMessage("l'avversario cade a terra");
@@ -114,14 +123,22 @@ const MyGame = (props) => {
   const enemyTurn = () => {
     let dice = Math.floor(Math.random() * 20 + 1);
     if (dice + fight.bonus >= playerInformation.armorClass) {
+      let newMyHealth = playerInformation.health;
+      const enemyDamage = (dice === 20 ? fight.attack * 2 : fight.attack) - inventory.armor.defence;
+      switch (enemyDamage) {
+        case enemyDamage > 0:
+          newMyHealth -= enemyDamage;
+          break;
+        default:
+          newMyHealth -= 1;
+          break;
+      }
       setEnemyMessage(
         `l'avversario ti colpisce con un ${dice} (totale ${dice + fight.bonus}) , infligendoti ${
-          dice === 20 ? fight.attack * 2 : fight.attack
+          enemyDamage > 0 ? enemyDamage : 1
         } danni`
       );
-      let newMyHealth = playerInformation.health;
-      newMyHealth -= (dice === 20 ? fight.attack * 2 : fight.attack) - inventory.armor.defence;
-      dispatch({ type: CHANGE_HEALTH, payload: newMyHealth });
+      newMyHealth -= dispatch({ type: CHANGE_HEALTH, payload: newMyHealth });
       if (newMyHealth <= 0) {
         setPlayerMessage("il tuo nemico esegue il colpo di grazia e tu cadi a terra perdendo i sensi");
         dispatch({ type: CHANGE_STATUS, payload: "death" });
@@ -274,6 +291,7 @@ const MyGame = (props) => {
           )}
           <Button
             variant="outline-success"
+            className="d-none d-md-inline"
             onClick={() => {
               setPlayerInfo(true);
             }}
@@ -283,6 +301,7 @@ const MyGame = (props) => {
           </Button>
           <Button
             variant="outline-warning"
+            className="d-none d-md-inline"
             onClick={() => {
               setPlayerEquipment(true);
             }}
@@ -294,9 +313,7 @@ const MyGame = (props) => {
       </Container>
 
       {/* ----------------------------------modale per il loot-------------------------------- */}
-
       <LootModal show={lootModal} loot={loot} chooseMessage={chooseMessage} onHide={lootModalSet} />
-
       {/* ----------------------------------modale per le info del giocatore-------------------------------- */}
       <PlayerInfo
         playerInformation={playerInformation}
@@ -305,78 +322,9 @@ const MyGame = (props) => {
         onHide={playerInfoModalSet}
       />
       {/* ----------------------------------modale per l'equip del giocatore-------------------------------- */}
-      <Modal show={playerEquipment} onHide={() => setPlayerEquipment(false)} className="btn-close-white" size={"lg"}>
-        <Modal.Header closeButton>
-          <Modal.Title>Equipaggiamento</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Row>
-            <Col xs={12} md={6} lg={4}>
-              <p className="fs-3">armatura: {inventory.armor.name}</p>
-              <img
-                src={
-                  inventory.armor.image !== ""
-                    ? inventory.armor.image
-                    : "https://gfftactical.com/wp-content/uploads/2021/07/IIIA_Panel-1.jpeg"
-                }
-                alt={inventory.armor.name}
-                className="img-fluid"
-              />
-              <p>armatura: {inventory.armor.defence}</p>
-            </Col>
-
-            <Col xs={12} md={6} lg={4}>
-              <p className="fs-2">scudo: {inventory.shield.name}</p>
-              <img
-                src={
-                  inventory.shield.image !== ""
-                    ? inventory.shield.image
-                    : "https://image.spreadshirtmedia.net/image-server/v1/products/T1459A839PA4459PT28D186047961W9058H10000/views/1,width=550,height=550,appearanceId=839,backgroundColor=F2F2F2/coat-of-arms-blank-form-placeholder-sticker.jpg"
-                }
-                alt={inventory.shield.name}
-                className="img-fluid"
-              />
-              <p>classe armatura bonus: {inventory.shield.bonusAC}</p>
-            </Col>
-
-            <Col xs={12} md={6} lg={4}>
-              <p className="fs-2">arma: {inventory.weapon.name}</p>
-              <img
-                src={
-                  inventory.weapon.image !== ""
-                    ? inventory.weapon.image
-                    : "https://thumb.silhouette-ac.com/t/dd/dd4e9b56617afe9310a6b6c534bc1a4c_t.jpeg"
-                }
-                alt={inventory.weapon.name}
-                className="img-fluid"
-              />
-              <p>attacco bonus: {inventory.weapon.bonusAT}</p>
-            </Col>
-          </Row>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setPlayerEquipment(false)}>
-            Chiudi
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <EquipmentModal show={playerEquipment} inventory={inventory} onHide={playerEquipModalSet} />
       {/* ----------------------------------modale per le info del nemico-------------------------------- */}
-      <Modal show={monsterInfo} onHide={() => setMonsterInfo(false)} className="btn-close-white" size={"lg"}>
-        <Modal.Header closeButton>
-          <Modal.Title>{fight.name}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>{fight.description}</p>
-          <p>attaco: {fight.attack}</p>
-          <p>bonus: {fight.bonus}</p>
-          <p>classe armatura: {fight.armorClass}</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setMonsterInfo(false)}>
-            Chiudi
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <MonsterModal show={monsterInfo} fight={fight} onHide={() => monsterStatsModalSet()} />
     </>
   );
 };

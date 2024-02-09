@@ -34,11 +34,18 @@ const MyMap = (props) => {
               alt="fight-room"
             />
           )}
+          {props.stages[props.level].boss.includes(i + 1) && (
+            <img
+              src={"https://i.pinimg.com/originals/69/b9/76/69b97620f148624bb47559c5302ba9ef.png"}
+              className={`${i === props.position ? "d-none" : ""} img-fluid`}
+              alt="boss-room"
+            />
+          )}
           {props.stages[props.level].boss.includes(i) && (
             <img
               src={"https://cdn3.iconfinder.com/data/icons/video-game-items-concepts/128/skull-2-512.png"}
               className={`${i === props.position ? "d-none" : ""} img-fluid`}
-              alt="fight-room"
+              alt="boss-room"
             />
           )}
           {props.stages[props.level].tresure.includes(i) && (
