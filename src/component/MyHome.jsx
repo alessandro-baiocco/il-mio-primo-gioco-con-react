@@ -6,6 +6,7 @@ import { boss } from "./assets/variables";
 import { items } from "./assets/variables";
 import MyMap from "./homegame/MyMap";
 import { useSelector } from "react-redux";
+import soundtrack from "./assets/music.mp3";
 
 const MyHome = () => {
   const coordinates = useSelector((state) => state.coordinates);
@@ -22,6 +23,9 @@ const MyHome = () => {
     >
       <MyMap stages={stages} position={coordinates.position} level={coordinates.stages}></MyMap>
       <MyGame stages={stages} items={items} boss={boss} enemies={enemies}></MyGame>
+      <Container className="d-flex p-0">
+        <audio controls src={soundtrack} loop style={{ width: "100%" }}></audio>
+      </Container>
     </Container>
   );
 };

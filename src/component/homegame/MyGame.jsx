@@ -1,20 +1,7 @@
 import { useState } from "react";
-import { Button, Container, ProgressBar } from "react-bootstrap";
+import { Container, ProgressBar } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  DEATH,
-  CHANGE_HEALTH,
-  makeAStep,
-  nextLevel,
-  CHANGE_STATUS,
-  CHOOSE_ENEMY,
-  ENEMY_DEFEATED,
-  ENEMY_HIT,
-} from "../../redux/action";
-import LootModal from "./modals/LootModal";
-import PlayerInfo from "./modals/PlayerInfo";
-import EquipmentModal from "./modals/EquipmentModal";
-import MonsterModal from "./modals/MonsterModal";
+import { CHANGE_HEALTH, CHANGE_STATUS, CHOOSE_ENEMY } from "../../redux/action";
 import TextBox from "./textbox/TextBox";
 
 const MyGame = (props) => {
@@ -37,7 +24,7 @@ const MyGame = (props) => {
     if (props.stages[coordinates.stages].boss.includes(coordinates.position + 2)) {
       dispatch({ type: CHANGE_HEALTH, payload: playerInformation.maxHealth });
       dispatch({ type: CHOOSE_ENEMY, payload: props.boss[coordinates.stages] });
-      setPlayerMessage("hai trovato un falò e ti sei riposato per qualche ora i tuoi HP tornano al massimo");
+      setPlayerMessage("hai trovato un falò e ti sei riposato per qualche ora, i tuoi HP tornano al massimo");
     }
     if (props.stages[coordinates.stages].fight.includes(coordinates.position + 2)) {
       dispatch({
